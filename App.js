@@ -25,6 +25,17 @@ const PendingView = () => (
 
 export default class App extends Component<Props> {
 
+    constructor(props: Props) {
+        super(props);
+
+        this.state = {
+            videoData: null,
+            startRecording: false,
+            stopRecording: false,
+            data: null,
+        };
+    }
+
     takePicture = async (camera) => {
         if (camera) {
             const options = { quality: 0.5 };
@@ -35,10 +46,26 @@ export default class App extends Component<Props> {
         }
     };
 
+    recordVideo = async () => {
+        if (this.camera) {
+            const data = await this.camera.recordAsync();
+            CameraRoll.saveToCameraRoll(data.uri, 'video').then(onfulfilled => {
+                ToastAndroid.show(`New video path: ${onfulfilled}`, ToastAndroid.SHORT);
+                this.setState({ videoData: null, startRecording: false });
+            }).catch(error => ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT));
+        }
+    }
+
+    stopRecording = () => {
+        if (this.camera)
+            this.camera.stopRecording();
+    }
+
     render() {
         return (
             <View style={styles.container}>
                 <RNCamera
+                    ref={camera => this.camera = camera}
                     style={styles.preview}
                     type={RNCamera.Constants.Type.back}
                     flashMode={RNCamera.Constants.FlashMode.on}
@@ -49,8 +76,14 @@ export default class App extends Component<Props> {
                         if (status !== 'READY') return <PendingView />;
                             return (
                                 <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                                    <TouchableOpacity onPress={() => this.takePicture(camera)} style={styles.capture}>
+                                    <TouchableOpacity onPress={() => this.takePicture()} style={styles.capture}>
                                         <Text style={{ fontSize: 14 }}> SNAP </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={this.recordVideo} style={styles.capture}>
+                                        <Text style={{ fontSize: 14 }}> RECORD </Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={this.stopRecording} style={styles.capture}>
+                                        <Text style={{ fontSize: 14 }}> STOP RECORDING </Text>
                                     </TouchableOpacity>
                                 </View>
                             );
