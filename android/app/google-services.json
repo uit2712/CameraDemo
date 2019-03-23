@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "151009557279",
+    "firebase_url": "https://textrecognition-538ca.firebaseio.com",
+    "project_id": "textrecognition-538ca",
+    "storage_bucket": "textrecognition-538ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:151009557279:android:d49ea5b21b2b91cd",
+        "android_client_info": {
+          "package_name": "com.camerademo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "151009557279-fnjo0njpnn0rctqki4dh53rtm7653l0q.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfJOXyP7edpeGn5A7d2iBhgW8MboOcOsw"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

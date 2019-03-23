@@ -105,6 +105,10 @@ export default class App extends Component<Props> {
         return `${mDisplay}:${sDisplay}`; 
     }
 
+    recognizeText = (textBlocks) => {
+        console.log(textBlocks);
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -116,6 +120,7 @@ export default class App extends Component<Props> {
                     permissionDialogTitle={'Permission to use camera'}
                     permissionDialogMessage={'We need your permission to use your camera phone'}
                     captureAudio={this.state.captureAudio}
+                    onTextRecognized={(text) => this.recognizeText(text)}
                 >
                     {({ camera, status, recordAudioPermissionStatus }) => {
                         if (status !== 'READY') return <PendingView />;

@@ -96,6 +96,10 @@ def enableProguardInReleaseBuilds = false
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    packagingOptions {
+        exclude 'META-INF/androidx.exifinterface_exifinterface.version'
+        exclude 'META-INF/proguard/androidx-annotations.pro'
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -107,7 +111,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
-        missingDimensionStrategy 'react-native-camera', 'general'
+        missingDimensionStrategy 'react-native-camera', 'mlkit'
     }
     signingConfigs {
         release {
@@ -155,6 +159,9 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
+    implementation "com.google.firebase:firebase-ml-common:16.1.6"
+    implementation "com.google.firebase:firebase-ml-model-interpreter:16.2.4"
+    implementation "com.google.firebase:firebase-ml-vision:18.0.2"
 }
 
 // Run this once to be able to run the application with BUCK
@@ -163,4 +170,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
-// apply plugin: 'com.google.gms.google-services'
+apply plugin: 'com.google.gms.google-services'
+com.google.gms.googleservices.GoogleServicesPlugin.config.disableVersionCheck = true
