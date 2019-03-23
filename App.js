@@ -9,6 +9,8 @@
 import React, { Component } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, CameraRoll, ToastAndroid } from 'react-native';
 import { RNCamera } from 'react-native-camera';
+import EntypoIcon from 'react-native-vector-icons/Entypo';
+import IoniconsIcon from 'react-native-vector-icons/Ionicons';
 
 const PendingView = () => (
     <View
@@ -30,34 +32,77 @@ export default class App extends Component<Props> {
 
         this.state = {
             videoData: null,
-            startRecording: false,
-            stopRecording: false,
+            recording: false,
             data: null,
+            flashMode: false,
+            backCamera: true,
+            seconds: 0,
+            maxDuration: 300, // seconds
+            captureAudio: true,
         };
     }
 
-    takePicture = async (camera) => {
-        if (camera) {
-            const options = { quality: 0.5 };
-            const data = await camera.takePictureAsync(options);
-            CameraRoll.saveToCameraRoll(data.uri, "photo").then(onfulfilled => {
+    takePicture = async () => {
+        if (this.camera) {
+            const options = { quality: 1 };
+            const data = await this.camera.takePictureAsync(options);
+            CameraRoll.saveToCameraRoll(data.uri, 'photo').then(onfulfilled => {
                 ToastAndroid.show(onfulfilled, ToastAndroid.SHORT);
-            }).catch(error => ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT));
+            }).catch(error => {
+                ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT);
+            });
         }
     };
 
     recordVideo = async () => {
         if (this.camera) {
-            const data = await this.camera.recordAsync();
-            CameraRoll.saveToCameraRoll(data.uri, 'video').then(onfulfilled => {
-                ToastAndroid.show(`New video path: ${onfulfilled}`, ToastAndroid.SHORT)
-            }).catch(error => ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT));
+            if (!this.state.recording)
+                this.startRecording();
+            else this.stopRecording();
         }
     }
 
+    startRecording = async () => {
+        this.setState({ recording: true });
+        this.countRecordTime = setInterval(() => this.setState({ seconds: this.state.seconds + 1 }), 1000);
+        const cameraConfig = { maxDuration: this.state.maxDuration };
+        const data = await this.camera.recordAsync(cameraConfig);
+        this.setState({ recording: false });
+        CameraRoll.saveToCameraRoll(data.uri, 'video').then(onfulfilled => {
+            ToastAndroid.show(`New video path: ${onfulfilled}`, ToastAndroid.SHORT)
+        }).catch(error => ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT));
+    }
+
     stopRecording = () => {
-        if (this.camera)
-            this.camera.stopRecording();
+        this.camera.stopRecording();
+        clearInterval(this.countRecordTime);
+        this.setState({ seconds: 0 });
+    }
+
+    reverseCamera = () => {
+        if (this.state.recording) {
+            clearInterval(this.countRecordTime);
+            this.setState({ seconds: 0 });
+        }
+
+        let backCamera = !this.state.backCamera;
+        if (backCamera)
+            ToastAndroid.show('Reverse to back camera', ToastAndroid.SHORT);
+        else ToastAndroid.show('Reverse to front camera', ToastAndroid.SHORT);
+        this.setState({ backCamera });
+    }
+
+    controlFlashMode = () => {
+        this.setState({ flashMode: !this.state.flashMode });
+    }
+
+    secondsToMMSS = (seconds: number) => {
+        let m = Math.floor(seconds / 60);
+        let s = Math.floor(seconds % 60);
+    
+        let mDisplay = m < 10 ? `0${m}` : `${m}`;
+        let sDisplay = s < 10 ? `0${s}` : `${s}`;
+        return `${mDisplay}:${sDisplay}`; 
     }
 
     render() {
@@ -66,23 +111,60 @@ export default class App extends Component<Props> {
                 <RNCamera
                     ref={camera => this.camera = camera}
                     style={styles.preview}
-                    type={RNCamera.Constants.Type.back}
-                    flashMode={RNCamera.Constants.FlashMode.on}
+                    type={this.state.backCamera ? RNCamera.Constants.Type.back : RNCamera.Constants.Type.front}
+                    flashMode={this.state.flashMode ? RNCamera.Constants.FlashMode.on: RNCamera.Constants.FlashMode.off}
                     permissionDialogTitle={'Permission to use camera'}
                     permissionDialogMessage={'We need your permission to use your camera phone'}
+                    captureAudio={this.state.captureAudio}
                 >
                     {({ camera, status, recordAudioPermissionStatus }) => {
                         if (status !== 'READY') return <PendingView />;
                             return (
-                                <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'center' }}>
-                                    <TouchableOpacity onPress={() => this.takePicture()} style={styles.capture}>
-                                        <Text style={{ fontSize: 14 }}> SNAP </Text>
+                                <View style={styles.actions}>
+                                    <TouchableOpacity
+                                        style={styles.iconContainer}
+                                        onPress={this.controlFlashMode}>
+                                        <IoniconsIcon
+                                            style={styles.icon}
+                                            size={50}
+                                            color='black'
+                                            name={ this.state.flashMode ? 'ios-flash' : 'ios-flash-off' }
+                                        />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={this.recordVideo} style={styles.capture}>
-                                        <Text style={{ fontSize: 14 }}> RECORD </Text>
+                                    <TouchableOpacity
+                                        style={styles.iconContainer}
+                                        onPress={this.reverseCamera}>
+                                        <IoniconsIcon
+                                            style={styles.icon}
+                                            size={60}
+                                            color='black'
+                                            name='ios-reverse-camera'
+                                        />
                                     </TouchableOpacity>
-                                    <TouchableOpacity onPress={this.stopRecording} style={styles.capture}>
-                                        <Text style={{ fontSize: 14 }}> STOP RECORDING </Text>
+                                    <TouchableOpacity
+                                        style={styles.iconContainer}
+                                        onPress={this.takePicture}>
+                                        <EntypoIcon
+                                            style={styles.icon}
+                                            size={40}
+                                            color='black'
+                                            name='camera'
+                                        />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.iconContainer}
+                                        onPress={this.recordVideo}>
+                                        <EntypoIcon
+                                            style={styles.icon}
+                                            size={40}
+                                            color={this.state.recording ? 'red' : 'black'}
+                                            name='video-camera'
+                                        />
+                                        {
+                                            this.state.recording ?
+                                            (<Text>{this.secondsToMMSS(this.state.seconds)}</Text>) :
+                                            (null)
+                                        }
                                     </TouchableOpacity>
                                 </View>
                             );
@@ -112,5 +194,20 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         alignSelf: 'center',
         margin: 20,
+    },
+    iconContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    icon: {
+        marginHorizontal: 15,
+        // paddingVertical: 10,
+    },
+    actions: {
+        flex: 0,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        backgroundColor: 'white',
+        width: '100%',
     },
 });
