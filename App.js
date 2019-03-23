@@ -50,8 +50,7 @@ export default class App extends Component<Props> {
         if (this.camera) {
             const data = await this.camera.recordAsync();
             CameraRoll.saveToCameraRoll(data.uri, 'video').then(onfulfilled => {
-                ToastAndroid.show(`New video path: ${onfulfilled}`, ToastAndroid.SHORT);
-                this.setState({ videoData: null, startRecording: false });
+                ToastAndroid.show(`New video path: ${onfulfilled}`, ToastAndroid.SHORT)
             }).catch(error => ToastAndroid.show(`${error.message}`, ToastAndroid.SHORT));
         }
     }
