@@ -2,8 +2,8 @@
 Create your simple camera for taking photos and recording videos :D
 
 Youtube links:
-- Part 1:
-- Part 2:
+- Part 1: https://youtu.be/gVZmgo9ycko
+- Part 2: https://youtu.be/jg95QD0ScAA
 
 ------------------CAMERA DEMO IN REACT NATIVE------------------
 1. STEP 1: Install necessary modules 'react-native-camera', 'react-native-permissions', 'react-native-vector-icons'
