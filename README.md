@@ -49,6 +49,7 @@ android {
 + Start recording video: count time
 
 -------------Convert seconds to format 'mm:ss'
+<pre>
 secondsToMMSS = (seconds: number) => {
         let m = Math.floor(seconds / 60);
         let s = Math.floor(seconds % 60);
@@ -57,5 +58,5 @@ secondsToMMSS = (seconds: number) => {
         let sDisplay = s < 10 ? `0${s}` : `${s}`;
         return `${mDisplay}:${sDisplay}`; 
     }
-
+</pre>
 + Stop recording video: reset time
