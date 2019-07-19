@@ -23,12 +23,14 @@ android {
 }
 </pre>
 2. STEP 2: Grant permissions 'record_audio', 'camera', 'storage'. Go to file '/app/src/main/AndroidManifest.xml'
+<pre>
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+</pre>
 3. STEP 3: Configure general camera:
 + flashMode: on, off (used for take picture)
 + captureAudio: true, false (mute or unmute used for recording video)
