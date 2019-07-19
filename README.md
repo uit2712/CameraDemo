@@ -42,7 +42,7 @@ android {
 + 'reverse camera' (size 60, IoniconsIcon: 'ios-reverse-camera')
 + 'capture' (size 40, Entypo: 'camera')
 + 'record video' (size 40, Entypo: 'video-camera')
-5. STEP 5: Turn on/of flash
+5. STEP 5: Turn on/off flash
 6. STEP 6: Capture
 7. STEP 7: Reverse camera
 8. STEP 8: Record video
